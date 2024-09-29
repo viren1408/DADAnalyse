@@ -229,9 +229,9 @@ class DADAnalyse:
 
     def compute_visibilities(self, antenna1, antenna2, chunk_size=1024): 
         """
-        Compute the visibilities between two antennas using their time-domain data.
+        Compute the visibilities between two antennas using the baseband data.
 
-        This function segments the time-domain data into chunks, performs a Fourier transform on each chunk, 
+        This function segments the voltage data into chunks, performs a Fourier transform on each chunk, 
         and then computes the cross-spectral density for the specified antenna pair. 
 
         Args:
@@ -243,30 +243,28 @@ class DADAnalyse:
             cross_spectral_density (np.ndarray): A complex array containing the cross-spectral density of the 
             specified antenna pair. The dimensions are (chunk_size, num_channels, num_polarizations).
 
-        Notes:
-            - Ensure that the specified antenna indices are valid and within the range of the loaded data.
         """       
 
         combined_data = self.combined_data()
         
-        data1 = combined_data[:, antenna1, :, :]
-        data2 = combined_data[:, antenna2, :, :]
+        data1 = combined_data[:,antenna1, :, :]
+        data2 =combined_data[:,antenna2, :, :]
         
         num_chunks = data1.shape[0] // chunk_size
-        cross_spectral_density = np.zeros((chunk_size, data1.shape[1], data1.shape[2]), dtype=np.complex64)
+        cross_spectral_density = np.zeros((chunk_size,data1.shape[1], data1.shape[2]),dtype=np.complex64)
         
         for i in range(num_chunks):
-            start_idx = i * chunk_size
-            end_idx = (i + 1) * chunk_size
+            start_idx = i*chunk_size
+            end_idx = (i + 1)*chunk_size
 
-            data1_chunk = data1[start_idx:end_idx, :, :]
-            data2_chunk = data2[start_idx:end_idx, :, :]
+            data1_chunk = data1[start_idx:end_idx,:,:]
+            data2_chunk =data2[start_idx:end_idx,:, :]
 
-            fft_data1_chunk = np.fft.fftshift(np.fft.fft(data1_chunk, axis=0), axes=0)
-            fft_data2_chunk = np.fft.fftshift(np.fft.fft(data2_chunk, axis=0), axes=0)
+            fft_data1_chunk= np.fft.fftshift(np.fft.fft(data1_chunk, axis=0), axes=0)
+            fft_data2_chunk =np.fft.fftshift(np.fft.fft(data2_chunk, axis=0), axes=0)
 
-            cross_spec_chunk = fft_data1_chunk * np.conjugate(fft_data2_chunk)
-            cross_spectral_density += cross_spec_chunk
+            cross_spec_chunk =fft_data1_chunk * np.conjugate(fft_data2_chunk)
+            cross_spectral_density+= cross_spec_chunk
 
         return cross_spectral_density
     
@@ -280,9 +278,8 @@ class DADAnalyse:
             antenna2 (int): Index of antenna2.
             channel (int): Frequency channel index (defualt : 10).
 
-        Notes:
-            - Ensure that the antenna indices are within the range of the loaded data.The baseline length code is yet to be tested ! 
-            - Ensure the channel is specified within range (most likely : 0-64)
+        - Ensure that the antenna indices are within the range of the loaded data.The baseline length code is yet to be tested ! 
+        - Ensure the channel is specified within range (most likely : 0-64)
         """       
     
         visibilities = self.compute_visibilities(antenna1,antenna2)
@@ -293,7 +290,7 @@ class DADAnalyse:
         visibility_imag = visibilities[:, channel, polarization].imag
         phase = np.arctan2(visibility_imag, visibility_real)/np.pi
 
-        fig, axs = plt.subplots(3, 1, figsize=(12, 10), sharex=True)
+        fig, axs = plt.subplots(3,1, figsize=(12, 10), sharex=True)
 
         axs[0].plot(time, visibility_real, label='Real Part', color='red')
         axs[0].set_title(f'Visibility Fringes (Channel {channel}, Polarization {polarization})')
@@ -302,7 +299,7 @@ class DADAnalyse:
         axs[0].legend()
         axs[0].grid(True)
 
-        axs[1].plot(time, visibility_imag, label='Imaginary Part', color='green')
+        axs[1].plot(time, visibility_imag,label='Imaginary Part', color='green')
         axs[1].set_xlabel('Time')
         axs[1].set_ylabel('Imaginary Part')
         axs[1].legend()
@@ -376,8 +373,8 @@ class DADAnalyse:
             peak_snr_bin = np.argmax(snr_cross_co[:,channel])
             snr_cross[channel] = snr_cross_co[peak_snr_bin,channel]
             
-            cross_co_max_snr_array[channel, 0]= peak_snr_bin  # Bin index
-            cross_co_max_snr_array[channel, 1] =snr_cross_co[peak_snr_bin,channel]  # Peak SNR value
+            cross_co_max_snr_array[channel, 0]= peak_snr_bin  # bin index
+            cross_co_max_snr_array[channel, 1] =snr_cross_co[peak_snr_bin,channel]  # SNR_peak value
         
         if plot_snr==True:
             plt.figure(figsize=(10, 6))
