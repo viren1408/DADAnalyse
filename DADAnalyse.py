@@ -34,7 +34,7 @@ class DADAnalyse:
                 key, value = line.split(None, 1)
                 header_dict[key] = value.strip()
 
-        # Cast to appropriate types
+
         header_dict['NBIT'] = int(header_dict['NBIT'])
         header_dict['NDIM'] = int(header_dict['NDIM'])
         header_dict['NPOL'] = int(header_dict['NPOL'])
