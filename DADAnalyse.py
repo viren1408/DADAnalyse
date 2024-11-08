@@ -157,7 +157,7 @@ class DADAnalyse:
     
     def combined_data(self):
         """
-        Combine the two time axes
+        Combine the 2 time axes: time and the inner time chunks 
         """
         combined_data = self.data.transpose(0, 3, 1, 2, 4).reshape(-1, self.data.shape[1], self.data.shape[2], self.data.shape[4])
 
