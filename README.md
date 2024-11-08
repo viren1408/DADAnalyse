@@ -4,5 +4,5 @@ DADAnalyse is a module to process, analyze, and visualize voltage data from.DADA
 ## Caution
 The code is currently being tested on DADA files of the format TAFTP 
 
-# Acknowledgement 
+## Acknowledgement 
 I would like to thank Colin Clark and Matthew Bailes for their valuable contributions to the code. 
